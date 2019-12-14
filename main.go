@@ -1,22 +1,39 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"log"
+	"os"
 )
 
 func main() {
-	// this is pure garbage
-	// we should ask login/password everytime and keep cookies in memory for the time being
-	api, err := NewAPI(FileAuthStore(DefaultAuthFile))
+	username := flag.String("u", "", "Ubiquiti controller username")
+	password := flag.String("p", "", "Ubiquiti controller username")
+	controllerHost := flag.String("c", "", "Ubiquiti controller host")
+	flag.Parse()
+	if *username == "" {
+		fmt.Println("Missing username")
+		fmt.Println("usage:")
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	if *password == "" {
+		fmt.Println("Missing password")
+		fmt.Println("usage:")
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	if *controllerHost == "" {
+		fmt.Println("Missing controller host")
+		fmt.Println("usage:")
+		flag.PrintDefaults()
+		os.Exit(1)
+	}
+	api, err := buildAPI(*username, *password, *controllerHost)
 	if err != nil {
 		log.Fatalf("unifi.NewClient: %v", err)
 	}
-	defer func() {
-		if err := api.WriteConfig(); err != nil {
-			log.Printf("api.WriteConfig: %v", err)
-		}
-	}()
 
 	log.Printf("Fetching clients...")
 	clients, err := api.ListClients("default")

@@ -16,24 +16,11 @@ import (
 type API struct {
 	httpClient *http.Client
 	cookieBase *url.URL
-	authStore  AuthStore
 	auth       *Auth
 }
 
-// Auth holds the authentication information for accessing a UniFi controller.
-type Auth struct {
-	Username       string
-	Password       string
-	ControllerHost string
-	Cookies        []*http.Cookie
-}
-
-// NewAPI constructs a new API.
-func NewAPI(authStore AuthStore) (*API, error) {
-	auth, err := authStore.Load()
-	if err != nil {
-		return nil, err
-	}
+func buildAPI(username string, password string, controllerhost string) (*API, error) {
+	auth := Auth{username, password, controllerhost, nil}
 	jar, err := cookiejar.New(nil)
 	if err != nil {
 		return nil, err
@@ -55,16 +42,9 @@ func NewAPI(authStore AuthStore) (*API, error) {
 			Jar: jar,
 		},
 		cookieBase: cookieBase,
-		authStore:  authStore,
-		auth:       auth,
+		auth:       &auth,
 	}
 	return api, nil
-}
-
-// WriteConfig writes the configuration to the configured AuthStore.
-func (api *API) WriteConfig() error {
-	api.auth.Cookies = api.httpClient.Jar.Cookies(api.cookieBase)
-	return api.authStore.Save(api.auth)
 }
 
 func (api *API) post(u string, src, dst interface{}, opts reqOpts) error {
@@ -77,7 +57,7 @@ func (api *API) post(u string, src, dst interface{}, opts reqOpts) error {
 	if err != nil {
 		panic("internal error: " + err.Error())
 	}
-	return api.processHttpRequest(req, dst, opts)
+	return api.processHTTPRequest(req, dst, opts)
 }
 
 func (api *API) get(u string, dst interface{}, opts reqOpts) error {
@@ -86,14 +66,14 @@ func (api *API) get(u string, dst interface{}, opts reqOpts) error {
 	if err != nil {
 		panic("internal error: " + err.Error())
 	}
-	return api.processHttpRequest(req, dst, opts)
+	return api.processHTTPRequest(req, dst, opts)
 }
 
 type reqOpts struct {
 	referer string
 }
 
-func (api *API) processHttpRequest(req *http.Request, dst interface{}, opts reqOpts) error {
+func (api *API) processHTTPRequest(req *http.Request, dst interface{}, opts reqOpts) error {
 	if opts.referer != "" {
 		req.Header.Set("Referer", opts.referer)
 	}
