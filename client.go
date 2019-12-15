@@ -14,6 +14,8 @@ type Client struct {
 	MAC string `json:"mac"`
 	IP  string `json:"ip"`
 
+	Blocked bool `json:"blocked"`
+
 	LastSeen time.Time
 
 	// TODO: other fields

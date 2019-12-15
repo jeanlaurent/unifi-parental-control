@@ -97,7 +97,10 @@ func (api *API) processHTTPRequest(req *http.Request, dst interface{}, opts reqO
 		if err != nil {
 			return err
 		}
-
+		fmt.Println(req.Method)
+		if req.Method == "POST" {
+			fmt.Println(string(body))
+		}
 		if err := json.Unmarshal(body, &dec); err != nil {
 			return fmt.Errorf("parsing response body: %v", err)
 		}
