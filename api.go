@@ -157,7 +157,7 @@ func (api *API) BlockClient(site string, mac string) error {
 		Mac string `json:"mac"`
 	}{
 		Cmd: "block-sta",
-		Mac: strings.ToUpper(mac),
+		Mac: strings.ToLower(mac),
 	}
 	err := api.post("/api/s/"+site+"/cmd/stamgr", &request, &json.RawMessage{}, reqOpts{})
 	if err != nil {
@@ -172,7 +172,7 @@ func (api *API) UnblockClient(site string, mac string) error {
 		Mac string `json:"mac"`
 	}{
 		Cmd: "unblock-sta", //only diff with above function
-		Mac: strings.ToUpper(mac),
+		Mac: strings.ToLower(mac),
 	}
 	err := api.post("/api/s/"+site+"/cmd/stamgr", &request, &json.RawMessage{}, reqOpts{})
 	if err != nil {
