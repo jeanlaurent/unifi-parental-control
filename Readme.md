@@ -11,3 +11,10 @@ go run *.go -u username -p password -c 10.0.80.20 -unblock 7c:2f:80:18:74:e5
 # Running in server mode
 
 go run *.go -u username -p password -c 10.0.80.20 -m server
+
+
+# TODO
+* remember blocked devices
+* create kid
+* assign device to kid
+* setup recurring stop/start

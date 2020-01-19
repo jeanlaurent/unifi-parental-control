@@ -21,11 +21,17 @@ type Client struct {
 	// TODO: other fields
 }
 
+func (c *Client) getName() string {
+	if c.Name == "" {
+		return c.Hostname
+	}
+	return c.Name
+}
+
 func (c *Client) UnmarshalJSON(data []byte) error {
 	type Alias Client
 	aux := struct {
 		*Alias
-
 		LastSeen int64 `json:"last_seen"`
 		// TODO: do this for MAC, IP
 	}{Alias: (*Alias)(c)}

@@ -39,6 +39,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("unifi.NewClient: %v", err)
 	}
+	db, err := initDb()
+	if err != nil {
+		log.Fatalf("unifi.NewDB: %v", err)
+	}
 	if *mode == "cli" {
 		listClients(api)
 		if *block != "" {
@@ -63,7 +67,7 @@ func main() {
 		}
 
 	} else {
-		start(api)
+		start(api, db)
 	}
 
 }
