@@ -17,6 +17,7 @@ func main() {
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
 	flag.Parse()
+
 	if *username == "" {
 		fmt.Println("Missing username")
 		fmt.Println("usage:")
@@ -35,14 +36,17 @@ func main() {
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
 	api, err := buildAPI(*username, *password, *controllerHost)
 	if err != nil {
 		log.Fatalf("unifi.NewClient: %v", err)
 	}
+
 	db, err := initDb()
 	if err != nil {
 		log.Fatalf("unifi.NewDB: %v", err)
 	}
+
 	if *mode == "cli" {
 		listClients(api)
 		if *block != "" {
