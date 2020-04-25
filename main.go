@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 
+	"./unifi"
 	prettyTime "github.com/andanhm/go-prettytime"
 )
 
@@ -38,7 +39,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	api, err := buildAPI(*username, *password, *controllerHost)
+	api, err := unifi.BuildAPI(*username, *password, *controllerHost)
 	if err != nil {
 		log.Fatalf("buildApi Error: %v", err)
 	}
@@ -84,7 +85,7 @@ func main() {
 
 }
 
-func listClients(api *API) {
+func listClients(api *unifi.API) {
 	log.Printf("Fetching clients...")
 	clients, err := api.ListClients("default")
 	if err != nil {
@@ -104,7 +105,7 @@ func listClients(api *API) {
 	}
 }
 
-func listNetworks(api *API) {
+func listNetworks(api *unifi.API) {
 	log.Printf("Fetching wireless networks...")
 	wlans, err := api.ListWirelessNetworks("default")
 	if err != nil {

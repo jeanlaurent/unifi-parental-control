@@ -1,4 +1,4 @@
-package main
+package unifi
 
 import (
 	"bytes"
@@ -19,7 +19,7 @@ type API struct {
 	auth       *Auth
 }
 
-func buildAPI(username string, password string, controllerhost string) (*API, error) {
+func BuildAPI(username string, password string, controllerhost string) (*API, error) {
 	auth := Auth{username, password, controllerhost, nil}
 	jar, err := cookiejar.New(nil)
 	if err != nil {

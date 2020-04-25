@@ -1,4 +1,4 @@
-package main
+package unifi
 
 type WirelessNetwork struct {
 	ID      string `json:"_id"`

@@ -1,4 +1,4 @@
-package main
+package unifi
 
 import "net/http"
 
