@@ -5,19 +5,21 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 
-	"./unifi"
 	prettyTime "github.com/andanhm/go-prettytime"
+	"github.com/go-co-op/gocron"
+	"github.com/jeanlaurent/unifi-parental-control/unifi"
 )
 
 func main() {
 	username := flag.String("u", "", "Ubiquiti controller username")
 	password := flag.String("p", "", "Ubiquiti controller username")
 	controllerHost := flag.String("c", "", "Ubiquiti controller host")
-	mode := flag.String("m", "cli", "mode could be cli or daemon, default to cli")
-	list := flag.String("list", "client", "list [client|network]")
+	list := flag.String("list", "", "list [client|network]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
+	config := flag.String("config", "", "config file")
 	flag.Parse()
 
 	if *username == "" {
@@ -44,43 +46,45 @@ func main() {
 		log.Fatalf("buildApi Error: %v", err)
 	}
 
-	if *mode == "cli" {
-		if *block != "" {
-			listClients(api)
-			log.Println("=========================")
-			log.Println("blocking", *block)
-			err = api.BlockClient("default", *block)
-			if err != nil {
-				log.Fatalf("blocking client: %v", err)
-			}
-			fmt.Println(*block, "should be blocked")
-			listClients(api)
+	if *block != "" {
+		listClients(api)
+		log.Println("=========================")
+		log.Println("blocking", *block)
+		err = api.BlockClient("default", *block)
+		if err != nil {
+			log.Fatalf("blocking client: %v", err)
 		}
-		if *unblock != "" {
-			listClients(api)
-			log.Println("=========================")
-			log.Println("unblocking", *unblock)
-			err = api.UnblockClient("default", *unblock)
-			if err != nil {
-				log.Fatalf("unblocking client: %v", err)
-			}
-			fmt.Println(*unblock, "should be unblocked")
-			listClients(api)
+		fmt.Println(*block, "should be blocked")
+		listClients(api)
+	}
+
+	if *unblock != "" {
+		listClients(api)
+		log.Println("=========================")
+		log.Println("unblocking", *unblock)
+		err = api.UnblockClient("default", *unblock)
+		if err != nil {
+			log.Fatalf("unblocking client: %v", err)
 		}
-		if *list != "" {
-			if *list == "client" {
-				listClients(api)
-			} else {
-				listNetworks(api)
-			}
+		fmt.Println(*unblock, "should be unblocked")
+		listClients(api)
+	}
+
+	if *list != "" {
+		if *list == "client" {
+			listClients(api)
+		} else {
+			listNetworks(api)
 		}
-		// if *unblock == "" && *block == "" {
-		// 	for {
-		// 		fmt.Println("uypupo")
-		// 	}
-		// }
-	} else {
-		log.Println("kaboom")
+	}
+
+	if *config != "" {
+		deviceConfig := readConfigFromDisk(*config)
+		scheduler := gocron.NewScheduler(time.Local)
+		scheduler.Every(1).Seconds().Do(func() {
+			fmt.Println(deviceConfig)
+		})
+
 	}
 
 }
