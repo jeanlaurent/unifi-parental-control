@@ -13,7 +13,8 @@ func main() {
 	username := flag.String("u", "", "Ubiquiti controller username")
 	password := flag.String("p", "", "Ubiquiti controller username")
 	controllerHost := flag.String("c", "", "Ubiquiti controller host")
-	mode := flag.String("m", "cli", "mode could be cli or server, default to cli")
+	mode := flag.String("m", "cli", "mode could be cli or daemon, default to cli")
+	list := flag.String("list", "client", "list [client|network]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
 	flag.Parse()
@@ -39,17 +40,12 @@ func main() {
 
 	api, err := buildAPI(*username, *password, *controllerHost)
 	if err != nil {
-		log.Fatalf("unifi.NewClient: %v", err)
-	}
-
-	db, err := initDb()
-	if err != nil {
-		log.Fatalf("unifi.NewDB: %v", err)
+		log.Fatalf("buildApi Error: %v", err)
 	}
 
 	if *mode == "cli" {
-		listClients(api)
 		if *block != "" {
+			listClients(api)
 			log.Println("=========================")
 			log.Println("blocking", *block)
 			err = api.BlockClient("default", *block)
@@ -60,6 +56,7 @@ func main() {
 			listClients(api)
 		}
 		if *unblock != "" {
+			listClients(api)
 			log.Println("=========================")
 			log.Println("unblocking", *unblock)
 			err = api.UnblockClient("default", *unblock)
@@ -69,9 +66,20 @@ func main() {
 			fmt.Println(*unblock, "should be unblocked")
 			listClients(api)
 		}
-
+		if *list != "" {
+			if *list == "client" {
+				listClients(api)
+			} else {
+				listNetworks(api)
+			}
+		}
+		// if *unblock == "" && *block == "" {
+		// 	for {
+		// 		fmt.Println("uypupo")
+		// 	}
+		// }
 	} else {
-		start(api, db)
+		log.Println("kaboom")
 	}
 
 }

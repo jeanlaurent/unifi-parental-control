@@ -1,7 +1,7 @@
 package main
 
-type device struct {
-	id   int
-	name string
-	mac  string
+type Device struct {
+	Mac         string `yaml:"mac"`
+	BlockTime   string `yaml:"blockTime"`
+	UnblockTime string `yaml:"unblockTime"`
 }
