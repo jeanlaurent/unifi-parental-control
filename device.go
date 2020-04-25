@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -37,7 +36,7 @@ func crappyParseTime(timeAsString string) (time.Time, error) {
 	now := time.Now()
 	parts := strings.Split(timeAsString, ":")
 	if len(parts) != 2 {
-		return now, errors.New(fmt.Sprintf("error while parsing date, %v", parts))
+		return now, fmt.Errorf("error while parsing date, %v", parts)
 	}
 	hour, err := strconv.Atoi(parts[0])
 	if err != nil {
