@@ -151,6 +151,14 @@ func (api *API) ListClients(site string) ([]Client, error) {
 	return resp, nil
 }
 
+func (api *API) ListAllClients(site string) ([]Client, error) {
+	var resp []Client
+	if err := api.get("/api/s/"+site+"/stat/alluser", &resp, reqOpts{}); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (api *API) BlockClient(site string, mac string) error {
 	request := struct {
 		Cmd string `json:"cmd"`

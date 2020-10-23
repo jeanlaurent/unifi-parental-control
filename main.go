@@ -5,18 +5,16 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"time"
 
 	prettyTime "github.com/andanhm/go-prettytime"
-	"github.com/go-co-op/gocron"
 	"github.com/jeanlaurent/unifi-parental-control/unifi"
 )
 
 func main() {
-	username := flag.String("u", "", "Ubiquiti controller username")
-	password := flag.String("p", "", "Ubiquiti controller username")
-	controllerHost := flag.String("c", "", "Ubiquiti controller host")
-	list := flag.String("list", "", "list [client|network]")
+	username := flag.String("u", "", "Unifi controller username")
+	password := flag.String("p", "", "Unifi controller username")
+	controllerHost := flag.String("c", "", "Unifi controller host")
+	list := flag.String("list", "", "list [client|network|all]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
 	config := flag.String("config", "", "config file")
@@ -73,6 +71,8 @@ func main() {
 	if *list != "" {
 		if *list == "client" {
 			listClients(api)
+		} else if *list == "all" {
+			listAllClients(api)
 		} else {
 			listNetworks(api)
 		}
@@ -80,13 +80,18 @@ func main() {
 
 	if *config != "" {
 		deviceConfig := readConfigFromDisk(*config)
-		scheduler := gocron.NewScheduler(time.Local)
-		scheduler.Every(1).Seconds().Do(func() {
-			fmt.Println(deviceConfig)
-		})
-
+		startPollingScheduler(api, deviceConfig)
 	}
 
+}
+
+func listAllClients(api *unifi.API) {
+	log.Printf("Fetching clients...")
+	clients, err := api.ListAllClients("default")
+	if err != nil {
+		log.Fatalf("Fetching clients: %v", err)
+	}
+	displayClients(clients)
 }
 
 func listClients(api *unifi.API) {
@@ -95,8 +100,15 @@ func listClients(api *unifi.API) {
 	if err != nil {
 		log.Fatalf("Fetching clients: %v", err)
 	}
+	displayClients(clients)
+}
+
+func displayClients(clients []unifi.Client) {
 	for _, client := range clients {
-		name := client.Hostname
+		name := "unknow"
+		if client.Hostname != "" {
+			name = client.Hostname
+		}
 		if client.Name != "" {
 			name = client.Name
 		}
@@ -105,7 +117,7 @@ func listClients(api *unifi.API) {
 			wifi = "ethernet"
 		}
 		time := prettyTime.Format(client.LastSeen)
-		fmt.Println("device", name, "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
+		fmt.Println("device", name, "(", client.Manufacturer, ")", "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
 	}
 }
 

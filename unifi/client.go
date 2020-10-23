@@ -6,10 +6,11 @@ import (
 )
 
 type Client struct {
-	ID       string `json:"_id"`
-	Name     string `json:"name"`
-	Hostname string `json:"hostname"`
-	Wired    bool   `json:"is_wired"`
+	ID           string `json:"_id"`
+	Name         string `json:"name"`
+	Hostname     string `json:"hostname"`
+	Wired        bool   `json:"is_wired"`
+	Manufacturer string `json:"oui"`
 
 	MAC string `json:"mac"`
 	IP  string `json:"ip"`
