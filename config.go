@@ -7,16 +7,20 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-func parseConfig(configAsByte []byte) BlockRange {
-	readDevice := BlockRange{}
-	err := yaml.Unmarshal(configAsByte, &readDevice)
+type config struct {
+	blockRange []BlockRange
+}
+
+func parseConfig(configAsByte []byte) config {
+	config := config{blockRange: []BlockRange{}}
+	err := yaml.Unmarshal(configAsByte, &config.blockRange)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
-	return readDevice
+	return config
 }
 
-func readConfigFromDisk(filepath string) BlockRange {
+func readConfigFromDisk(filepath string) config {
 	file, err := ioutil.ReadFile(filepath)
 	if err != nil {
 		log.Fatalf("Can't read file #%v ", err)

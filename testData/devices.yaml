@@ -1,0 +1,7 @@
+---
+- mac: 00:22:d7:52:8b:74
+  blockTime: 18:00
+  unblockTime: 19:00
+- mac: f0:4f:7c:29:21:6c
+  blockTime: 17:00
+  unblockTime: 17:30
