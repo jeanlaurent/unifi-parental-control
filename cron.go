@@ -9,7 +9,7 @@ import (
 	"github.com/jeanlaurent/unifi-parental-control/unifi"
 )
 
-func startPollingScheduler(api *unifi.API, deviceConfig Device) {
+func startPollingScheduler(api *unifi.API, deviceConfig BlockRange) {
 	scheduler := gocron.NewScheduler(time.Local)
 	scheduler.Every(1).Seconds().Do(func() {
 		blockOrUnblockDevices(api, deviceConfig)
@@ -17,19 +17,19 @@ func startPollingScheduler(api *unifi.API, deviceConfig Device) {
 	<-scheduler.StartAsync()
 }
 
-func blockOrUnblockDevices(api *unifi.API, deviceConfig Device) {
+func blockOrUnblockDevices(api *unifi.API, deviceConfig BlockRange) {
 	clients, err := api.ListAllClients("default")
 	if err != nil {
 		log.Fatalf("Fetching clients: %v", err)
 	}
-
-	now := time.Now()
 
 	client := findClientByMac(deviceConfig.Mac, clients)
 	if client == nil {
 		fmt.Println("could not find client")
 		return
 	}
+
+	now := time.Now()
 
 	if deviceConfig.BlockTimeStamp().After(now) && deviceConfig.UnblockTimeStamp().Before(now) {
 		// block device

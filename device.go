@@ -7,13 +7,15 @@ import (
 	"time"
 )
 
-type Device struct {
+// BlockRange represent a range to be blocked
+type BlockRange struct {
 	Mac         string `yaml:"mac"`
 	BlockTime   string `yaml:"blockTime"`
 	UnblockTime string `yaml:"unblockTime"`
 }
 
-func (d *Device) BlockTimeStamp() time.Time {
+// BlockTimeStamp translate a blocked timestamp in to time.Time
+func (d *BlockRange) BlockTimeStamp() time.Time {
 	time, err := crappyParseTime(d.BlockTime)
 	if err != nil {
 		fmt.Println(err)
@@ -22,7 +24,8 @@ func (d *Device) BlockTimeStamp() time.Time {
 	return time
 }
 
-func (d *Device) UnblockTimeStamp() time.Time {
+// UnblockTimeStamp translate a unblock timestamo in to time.Time
+func (d *BlockRange) UnblockTimeStamp() time.Time {
 	time, err := crappyParseTime(d.UnblockTime)
 	if err != nil {
 		fmt.Println(err)
