@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/tls"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -54,6 +55,19 @@ func (api *API) post(u string, src, dst interface{}, opts reqOpts) error {
 		panic("internal error marshaling JSON POST body: " + err.Error())
 	}
 	req, err := http.NewRequest("POST", u, bytes.NewReader(body))
+	if err != nil {
+		panic("internal error: " + err.Error())
+	}
+	return api.processHTTPRequest(req, dst, opts)
+}
+
+func (api *API) put(u string, src, dst interface{}, opts reqOpts) error {
+	u = api.baseURL() + u
+	body, err := json.Marshal(src)
+	if err != nil {
+		panic("internal error marshaling JSON PUT body: " + err.Error())
+	}
+	req, err := http.NewRequest("PUT", u, bytes.NewReader(body))
 	if err != nil {
 		panic("internal error: " + err.Error())
 	}
@@ -214,10 +228,8 @@ type SwitchPort struct {
 }
 
 type UnifiDevice struct {
-	ID       string `json:"_id"`
-	Name     string `json:"name"`
-	Hostname string `json:"hostname"`
-	Wired    bool   `json:"is_wired"`
+	ID   string `json:"_id"`
+	Name string `json:"name"`
 
 	MAC       string       `json:"mac"`
 	IP        string       `json:"ip"`
@@ -233,4 +245,39 @@ func (api *API) ListDevices(site string) ([]UnifiDevice, error) {
 		return nil, err
 	}
 	return unifiDevices, nil
+}
+
+type PortOverride struct {
+	PortIdx    int    `json:"port_idx"`
+	PortConfID string `json:"portconf_id"`
+	PoeMode    string `json:"poe_mode"`
+}
+
+func (api *API) EnablePortPOE(site, deviceID string, portNumber int, enable bool) error {
+	devices, err := api.ListDevices(site)
+	if err != nil {
+		return err
+	}
+	for _, device := range devices {
+		if device.ID == deviceID {
+			for _, port := range device.PortTable {
+				if port.ID == portNumber {
+					poeMode := "off"
+					if enable {
+						poeMode = "auto"
+					}
+					request := struct {
+						PortOverrides []PortOverride `json:"port_overrides"`
+					}{
+						PortOverrides: []PortOverride{{PortIdx: port.ID, PortConfID: port.PortConfID, PoeMode: poeMode}},
+					}
+					//PUT /api/s/default/rest/device/5d61b90be30dfa0ddd69c964
+					// {"port_overrides":[{"port_idx":7,"portconf_id":"5d61b7e3e30dfa0ddd69c958","poe_mode":"off","port_security_mac_address":[]}]}
+					return api.put("/api/s/"+site+"/rest/device/"+deviceID, &request, &json.RawMessage{}, reqOpts{})
+
+				}
+			}
+		}
+	}
+	return errors.New("No device found with ID" + deviceID)
 }

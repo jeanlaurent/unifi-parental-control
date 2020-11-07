@@ -17,6 +17,9 @@ func main() {
 	list := flag.String("list", "", "list [client|network|all|device]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
+	port := flag.Int("port", 0, "Port to allow poe on")
+	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on")
+	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on")
 	config := flag.String("config", "", "config file")
 	flag.Parse()
 
@@ -66,6 +69,38 @@ func main() {
 		}
 		fmt.Println(*unblock, "should be unblocked")
 		listClients(api)
+	}
+
+	if *poeon != "" {
+		if *port == 0 {
+			log.Fatal("Please provide a port number")
+		}
+		devices, err := api.ListDevices("default")
+		if err != nil {
+			log.Fatalf("could not list devices: %v", err)
+		}
+		for _, device := range devices {
+			if device.ID == *poeon {
+				log.Println("Enabling POE on port", *port, " of switch ", device.Name)
+				api.EnablePortPOE("default", device.ID, *port, true)
+			}
+		}
+	}
+
+	if *poeoff != "" {
+		if *port == 0 {
+			log.Fatal("Please provide a port number")
+		}
+		devices, err := api.ListDevices("default")
+		if err != nil {
+			log.Fatalf("could not list devices: %v", err)
+		}
+		for _, device := range devices {
+			if device.ID == *poeoff {
+				log.Println("Disabling POE on port", *port, " of switch ", device.Name)
+				api.EnablePortPOE("default", device.ID, *port, false)
+			}
+		}
 	}
 
 	if *list != "" {
@@ -131,11 +166,7 @@ func listUnifiDevices(api *unifi.API) {
 	}
 
 	for _, device := range unifiDevices {
-		wifi := "wifi"
-		if device.Wired {
-			wifi = "ethernet"
-		}
-		fmt.Println("device", device.Name, "(", device.Type, device.Model, ")", "on", wifi, "[", device.MAC, "]")
+		fmt.Println("device", device.Name, "(", device.Type, device.Model, ")", "ID:", device.ID, "[", device.MAC, "]")
 		if len(device.PortTable) > 0 {
 			for _, port := range device.PortTable {
 				fmt.Println("\t", port.Name, "HasPoe:", port.POE, "up:", port.Up, "PortConf:", port.PortConfID)
