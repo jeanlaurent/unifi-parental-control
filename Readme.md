@@ -22,6 +22,31 @@ should result with device with mac address of `00:22:d7:01:01:01` being blocked 
 # Debug cli
 For all the below command, just run `make` once, this will generate a `upc` binary.
 
+## available commands
+```
+Usage of ./upc:
+  -block string
+    	mac address of device to block
+  -c string
+    	Unifi controller host
+  -config string
+    	config file
+  -list string
+    	list [client|network|all|device]
+  -p string
+    	Unifi controller username
+  -poeoff string
+    	DeviceID of switch to disable poe on
+  -poeon string
+    	DeviceID of switch to enable poe on
+  -port int
+    	Port to allow poe on
+  -u string
+    	Unifi controller username
+  -unblock string
+    	mac address of device to unblock
+```
+
 ## Listing clients
 `upc -u username -p password -c controllerIP -list client`
 
@@ -48,3 +73,8 @@ First identify the switch ID of the poe switch you want to power off a port by r
 `upc -u username -p password -c 10.0.80.20 -list device`
 Let say you see your switch as the ID `5d61b90be30dfa0ddd69c990`
 `upc -u username -p password -c controllerIP -poeon 5d61b90be30dfa0ddd69c990 -port 7`
+
+# Docker image
+
+A [docker image|https://hub.docker.com/repository/docker/jeanlaurent/upc] is available you can run the above command like 
+`docker run -ti jeanlaurent/upc -u username -p password -c controllerIP -list device`
