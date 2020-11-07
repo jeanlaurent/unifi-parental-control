@@ -14,7 +14,7 @@ func main() {
 	username := flag.String("u", "", "Unifi controller username")
 	password := flag.String("p", "", "Unifi controller username")
 	controllerHost := flag.String("c", "", "Unifi controller host")
-	list := flag.String("list", "", "list [client|network|all]")
+	list := flag.String("list", "", "list [client|network|all|device]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
 	config := flag.String("config", "", "config file")
@@ -73,8 +73,10 @@ func main() {
 			listClients(api)
 		} else if *list == "all" {
 			listAllClients(api)
-		} else {
+		} else if *list == "network" {
 			listNetworks(api)
+		} else {
+			listUnifiDevices(api)
 		}
 	}
 
@@ -118,6 +120,28 @@ func displayClients(clients []unifi.Client) {
 		}
 		time := prettyTime.Format(client.LastSeen)
 		fmt.Println("device", name, "(", client.Manufacturer, ")", "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
+	}
+}
+
+func listUnifiDevices(api *unifi.API) {
+	log.Printf("Fetching unifi devices...")
+	unifiDevices, err := api.ListDevices("default")
+	if err != nil {
+		log.Fatalf("Fetching clients: %v", err)
+	}
+
+	for _, device := range unifiDevices {
+		wifi := "wifi"
+		if device.Wired {
+			wifi = "ethernet"
+		}
+		fmt.Println("device", device.Name, "(", device.Type, device.Model, ")", "on", wifi, "[", device.MAC, "]")
+		if len(device.PortTable) > 0 {
+			for _, port := range device.PortTable {
+				fmt.Println("\t", port.Name, "HasPoe:", port.POE, "up:", port.Up, "PortConf:", port.PortConfID)
+			}
+
+		}
 	}
 }
 

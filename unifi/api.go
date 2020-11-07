@@ -204,3 +204,33 @@ func (api *API) EnableWirelessNetwork(site, id string, enable bool) error {
 	}{enable}
 	return api.post("/api/s/"+site+"/upd/wlanconf/"+id, &req, &json.RawMessage{}, reqOpts{})
 }
+
+type SwitchPort struct {
+	ID         int    `json:"port_idx"`
+	Name       string `json:"name"`
+	POE        bool   `json:"port_poe"`
+	PortConfID string `json:"portconf_id"`
+	Up         bool   `json:"up"`
+}
+
+type UnifiDevice struct {
+	ID       string `json:"_id"`
+	Name     string `json:"name"`
+	Hostname string `json:"hostname"`
+	Wired    bool   `json:"is_wired"`
+
+	MAC       string       `json:"mac"`
+	IP        string       `json:"ip"`
+	Model     string       `json:"model"` // usg/uap/usw
+	Type      string       `json:"type"`
+	PortTable []SwitchPort `json:"port_table"`
+}
+
+func (api *API) ListDevices(site string) ([]UnifiDevice, error) {
+	var unifiDevices []UnifiDevice
+	err := api.get("/api/s/"+site+"/stat/device", &unifiDevices, reqOpts{})
+	if err != nil {
+		return nil, err
+	}
+	return unifiDevices, nil
+}
