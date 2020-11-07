@@ -65,16 +65,18 @@ Usage of ./upc:
 ## Power off POE on a given switch port
 First identify the switch ID of the poe switch you want to power on a port by running 
 `upc -u username -p password -c 10.0.80.20 -list device`
+
 Let say you see your switch as the ID `5d61b90be30dfa0ddd69c990`
 `upc -u username -p password -c controllerIP -poeoff 5d61b90be30dfa0ddd69c990 -port 7`
 
 ## Power on POE off a given switch port
 First identify the switch ID of the poe switch you want to power off a port by running 
 `upc -u username -p password -c 10.0.80.20 -list device`
+
 Let say you see your switch as the ID `5d61b90be30dfa0ddd69c990`
 `upc -u username -p password -c controllerIP -poeon 5d61b90be30dfa0ddd69c990 -port 7`
 
 # Docker image
 
-A [docker image|https://hub.docker.com/repository/docker/jeanlaurent/upc] is available you can run the above command like 
+A [docker image](https://hub.docker.com/repository/docker/jeanlaurent/upc) is available you can run the above command like 
 `docker run -ti jeanlaurent/upc -u username -p password -c controllerIP -list device`
