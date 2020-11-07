@@ -17,10 +17,10 @@ func main() {
 	list := flag.String("list", "", "list [client|network|all|device]")
 	block := flag.String("block", "", "mac address of device to block")
 	unblock := flag.String("unblock", "", "mac address of device to unblock")
-	port := flag.Int("port", 0, "Port to allow poe on")
-	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on")
-	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on")
-	config := flag.String("config", "", "config file")
+	port := flag.Int("port", 0, "Port to allow poe on, must be used in conjunction with either -poeon or -poweroff")
+	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on, to be use in conjunction of -port")
+	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on, to be use in conjunction of -port")
+	config := flag.String("config", "", "config file to launch in cron mode")
 	flag.Parse()
 
 	if *username == "" {

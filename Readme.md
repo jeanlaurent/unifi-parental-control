@@ -30,17 +30,17 @@ Usage of ./upc:
   -c string
     	Unifi controller host
   -config string
-    	config file
+    	config file to launch in cron mode
   -list string
     	list [client|network|all|device]
   -p string
     	Unifi controller username
   -poeoff string
-    	DeviceID of switch to disable poe on
+    	DeviceID of switch to disable poe on, to be use in conjunction of -port
   -poeon string
-    	DeviceID of switch to enable poe on
+    	DeviceID of switch to enable poe on, to be use in conjunction of -port
   -port int
-    	Port to allow poe on
+    	Port to allow poe on, must be used in conjunction with either -poeon or -poweroff
   -u string
     	Unifi controller username
   -unblock string
