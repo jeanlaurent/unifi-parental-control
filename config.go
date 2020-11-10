@@ -8,12 +8,11 @@ import (
 )
 
 type config struct {
-	BlockRanges []BlockRange        `yaml:"blockRange"`
-	Groups      map[string][]string `yaml:"group"`
+	Groups map[string][]string `yaml:"group"`
 }
 
 func parseConfig(configAsByte []byte) config {
-	config := config{BlockRanges: []BlockRange{}, Groups: map[string][]string{}}
+	config := emptyConfig()
 	err := yaml.Unmarshal(configAsByte, &config)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
@@ -27,4 +26,8 @@ func readConfigFromDisk(filepath string) config {
 		log.Fatalf("Can't read file #%v ", err)
 	}
 	return parseConfig(file)
+}
+
+func emptyConfig() config {
+	return config{Groups: map[string][]string{}}
 }

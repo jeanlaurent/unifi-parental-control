@@ -4,3 +4,4 @@ run-block.sh
 run-poe.sh
 doc/devices.json
 build/*
+home.yaml

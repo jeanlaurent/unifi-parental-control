@@ -2,23 +2,6 @@
 You should go to your unifi web controller with your browser, note the IP of the controller somewhere we refer it in the doc below as `controllerIP`
 Create a user in your unifi controller web interface and we will refer to as `username` and `password` for now on.
 
-# Run it
-run `make` once then
-`upc -u username -p password -c controllerIP -config config.yaml`
-
-with `config.yaml` being
-
-```
-- mac: 00:22:d7:01:01:01
-  blockTime: 18:00
-  unblockTime: 19:00
-- mac: 00:22:d7:02:02:02
-  blockTime: 17:30
-  unblockTime: 17:45
-```
-
-should result with device with mac address of `00:22:d7:01:01:01` being blocked between 18:00 and 19:00, and device with mac address of '00:22:d7:02:02:02' to be blocked between 17h30 and 17h45 and unblocked otherwise
-
 # Debug cli
 For all the below command, just run `make` once, this will generate a `upc` binary.
 

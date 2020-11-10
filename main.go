@@ -50,27 +50,41 @@ func main() {
 	}
 
 	if *block != "" {
-		listClients(api)
-		log.Println("=========================")
+		deviceConfig := emptyConfig()
 		log.Println("blocking", *block)
-		err = api.BlockClient("default", *block)
-		if err != nil {
-			log.Fatalf("blocking client: %v", err)
+		if *config != "" {
+			deviceConfig = readConfigFromDisk(*config)
 		}
-		log.Println(*block, "should be blocked")
-		listClients(api)
+		group := deviceConfig.Groups[*block]
+		if group == nil {
+			group = []string{*block}
+		}
+		for _, mac := range group {
+			err = api.BlockClient("default", mac)
+			if err != nil {
+				log.Println("blocking client:", err)
+			}
+			log.Println(mac, "will be shortly blocked")
+		}
 	}
 
 	if *unblock != "" {
-		listClients(api)
-		log.Println("=========================")
+		deviceConfig := emptyConfig()
 		log.Println("unblocking", *unblock)
-		err = api.UnblockClient("default", *unblock)
-		if err != nil {
-			log.Fatalf("unblocking client: %v", err)
+		if *config != "" {
+			deviceConfig = readConfigFromDisk(*config)
 		}
-		log.Println(*unblock, "should be unblocked")
-		listClients(api)
+		group := deviceConfig.Groups[*unblock]
+		if group == nil {
+			group = []string{*unblock}
+		}
+		for _, mac := range group {
+			err = api.UnblockClient("default", mac)
+			if err != nil {
+				log.Println("unblocking client:", err)
+			}
+			log.Println(mac, "will be shortly unblocked")
+		}
 	}
 
 	if *poeon != "" {
@@ -115,11 +129,6 @@ func main() {
 		} else {
 			listUnifiDevices(api)
 		}
-	}
-
-	if *config != "" {
-		deviceConfig := readConfigFromDisk(*config)
-		startPollingScheduler(api, deviceConfig)
 	}
 
 }
