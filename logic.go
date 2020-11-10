@@ -13,7 +13,7 @@ func blockOrUnblockDevices(api *unifi.API, deviceConfig config) {
 		log.Fatalf("Fetching clients: %v", err)
 	}
 
-	for _, blockRange := range deviceConfig.blockRanges {
+	for _, blockRange := range deviceConfig.BlockRanges {
 
 		client := findClientByMac(blockRange.Mac, clients)
 		if client == nil {

@@ -8,12 +8,13 @@ import (
 )
 
 type config struct {
-	blockRanges []BlockRange
+	BlockRanges []BlockRange        `yaml:"blockRange"`
+	Groups      map[string][]string `yaml:"group"`
 }
 
 func parseConfig(configAsByte []byte) config {
-	config := config{blockRanges: []BlockRange{}}
-	err := yaml.Unmarshal(configAsByte, &config.blockRanges)
+	config := config{BlockRanges: []BlockRange{}, Groups: map[string][]string{}}
+	err := yaml.Unmarshal(configAsByte, &config)
 	if err != nil {
 		log.Fatalf("Unmarshal: %v", err)
 	}
