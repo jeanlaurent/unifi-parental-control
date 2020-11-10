@@ -2,7 +2,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
 	"os"
 
@@ -21,23 +20,26 @@ func main() {
 	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on, to be use in conjunction of -port")
 	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on, to be use in conjunction of -port")
 	config := flag.String("config", "", "config file to launch in cron mode")
+
 	flag.Parse()
 
 	if *username == "" {
-		fmt.Println("Missing username")
-		fmt.Println("usage:")
+		log.Println("Missing username")
+		log.Println("usage:")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
 	if *password == "" {
-		fmt.Println("Missing password")
-		fmt.Println("usage:")
+		log.Println("Missing password")
+		log.Println("usage:")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
+
 	if *controllerHost == "" {
-		fmt.Println("Missing controller host")
-		fmt.Println("usage:")
+		log.Println("Missing controller host")
+		log.Println("usage:")
 		flag.PrintDefaults()
 		os.Exit(1)
 	}
@@ -55,7 +57,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("blocking client: %v", err)
 		}
-		fmt.Println(*block, "should be blocked")
+		log.Println(*block, "should be blocked")
 		listClients(api)
 	}
 
@@ -67,7 +69,7 @@ func main() {
 		if err != nil {
 			log.Fatalf("unblocking client: %v", err)
 		}
-		fmt.Println(*unblock, "should be unblocked")
+		log.Println(*unblock, "should be unblocked")
 		listClients(api)
 	}
 
@@ -154,7 +156,7 @@ func displayClients(clients []unifi.Client) {
 			wifi = "ethernet"
 		}
 		time := prettyTime.Format(client.LastSeen)
-		fmt.Println("device", name, "(", client.Manufacturer, ")", "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
+		log.Println("device", name, "(", client.Manufacturer, ")", "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
 	}
 }
 
@@ -166,10 +168,10 @@ func listUnifiDevices(api *unifi.API) {
 	}
 
 	for _, device := range unifiDevices {
-		fmt.Println("device", device.Name, "(", device.Type, device.Model, ")", "ID:", device.ID, "[", device.MAC, "]")
+		log.Println("device", device.Name, "(", device.Type, device.Model, ")", "ID:", device.ID, "[", device.MAC, "]")
 		if len(device.PortTable) > 0 {
 			for _, port := range device.PortTable {
-				fmt.Println("\t", port.Name, "HasPoe:", port.POE, "up:", port.Up, "PortConf:", port.PortConfID)
+				log.Println("\t", port.Name, "HasPoe:", port.POE, "up:", port.Up, "PortConf:", port.PortConfID)
 			}
 
 		}
@@ -183,6 +185,6 @@ func listNetworks(api *unifi.API) {
 		log.Fatalf("Fetching wireless networks: %v", err)
 	}
 	for _, wlan := range wlans {
-		fmt.Printf("%+v\n", wlan)
+		log.Printf("%+v\n", wlan)
 	}
 }

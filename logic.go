@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -18,7 +17,7 @@ func blockOrUnblockDevices(api *unifi.API, deviceConfig config) {
 
 		client := findClientByMac(blockRange.Mac, clients)
 		if client == nil {
-			fmt.Println("could not find client")
+			log.Println("could not find client")
 			return
 		}
 
@@ -27,18 +26,18 @@ func blockOrUnblockDevices(api *unifi.API, deviceConfig config) {
 		if blockRange.BlockTimeStamp().After(now) && blockRange.UnblockTimeStamp().Before(now) {
 			// block device
 			if client.Blocked {
-				fmt.Println("Client ", blockRange.Mac, " already blocked, skipping")
+				log.Println("Client ", blockRange.Mac, " already blocked, skipping")
 			} else {
-				fmt.Println("blocking ", blockRange.Mac)
+				log.Println("blocking ", blockRange.Mac)
 				api.BlockClient("default", blockRange.Mac)
 			}
 		} else if client.Blocked { // unblock device
-			fmt.Println("unblocking ", blockRange.Mac)
+			log.Println("unblocking ", blockRange.Mac)
 			api.UnblockClient("default", blockRange.Mac)
 		} else {
-			fmt.Println("Client ", blockRange.Mac, " already unblocked, skipping")
+			log.Println("Client ", blockRange.Mac, " already unblocked, skipping")
 		}
-		fmt.Println(blockRange)
+		log.Println(blockRange)
 	}
 }
 

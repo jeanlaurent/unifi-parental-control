@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"strconv"
 	"strings"
 	"time"
@@ -18,7 +19,7 @@ type BlockRange struct {
 func (d *BlockRange) BlockTimeStamp() time.Time {
 	time, err := crappyParseTime(d.BlockTime)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		// KABBOOM
 	}
 	return time
@@ -28,7 +29,7 @@ func (d *BlockRange) BlockTimeStamp() time.Time {
 func (d *BlockRange) UnblockTimeStamp() time.Time {
 	time, err := crappyParseTime(d.UnblockTime)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		// KABOOM
 	}
 	return time

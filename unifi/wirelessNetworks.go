@@ -9,6 +9,4 @@ type WirelessNetwork struct {
 	WPAMode  string `json:"wpa_mode"`
 
 	Guest bool `json:"is_guest,omitempty"`
-
-	// TODO: other fields
 }

@@ -18,8 +18,6 @@ type Client struct {
 	Blocked bool `json:"blocked"`
 
 	LastSeen time.Time
-
-	// TODO: other fields
 }
 
 func (c *Client) getName() string {
