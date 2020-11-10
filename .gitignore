@@ -1,3 +1,6 @@
 upc
 run.sh
 run-block.sh
+run-poe.sh
+doc/devices.json
+build/*
