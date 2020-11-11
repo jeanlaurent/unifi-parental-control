@@ -147,7 +147,6 @@ func main() {
 }
 
 func listAllClients(api *unifi.API) {
-	log.Printf("List all clients...")
 	clients, err := api.ListAllClients("default")
 	if err != nil {
 		log.Fatalf("Listing all clients: %v", err)
@@ -156,7 +155,6 @@ func listAllClients(api *unifi.API) {
 }
 
 func listClients(api *unifi.API) {
-	log.Printf("List active clients...")
 	clients, err := api.ListClients("default")
 	if err != nil {
 		log.Fatalf("Listing w active clients: %v", err)
@@ -183,7 +181,6 @@ func displayClients(clients []unifi.Client) {
 }
 
 func listUnifiDevices(api *unifi.API) {
-	log.Printf("Fetching unifi devices...")
 	unifiDevices, err := api.ListDevices("default")
 	if err != nil {
 		log.Fatalf("Fetching unifi devices: %v", err)
@@ -201,7 +198,6 @@ func listUnifiDevices(api *unifi.API) {
 }
 
 func listNetworks(api *unifi.API) {
-	log.Printf("Fetching wireless networks...")
 	wlans, err := api.ListWirelessNetworks("default")
 	if err != nil {
 		log.Fatalf("Fetching wireless networks: %v", err)
