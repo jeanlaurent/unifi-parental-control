@@ -47,39 +47,39 @@ func BuildAPI(username string, password string, controllerhost string) (*API, er
 	return api, nil
 }
 
-func (api *API) post(u string, src, dst interface{}, opts reqOpts) error {
-	u = api.baseURL() + u
-	body, err := json.Marshal(src)
-	if err != nil {
-		panic("internal error marshaling JSON POST body: " + err.Error())
-	}
-	req, err := http.NewRequest("POST", u, bytes.NewReader(body))
-	if err != nil {
-		panic("internal error: " + err.Error())
-	}
-	return api.processHTTPRequest(req, dst, opts)
+func (api *API) post(urlPath string, source, destination interface{}, options reqOpts) error {
+	return api.putOrPost("POST", urlPath, source, destination, options)
 }
 
-func (api *API) put(u string, src, dst interface{}, opts reqOpts) error {
-	u = api.baseURL() + u
-	body, err := json.Marshal(src)
-	if err != nil {
-		panic("internal error marshaling JSON PUT body: " + err.Error())
-	}
-	req, err := http.NewRequest("PUT", u, bytes.NewReader(body))
-	if err != nil {
-		panic("internal error: " + err.Error())
-	}
-	return api.processHTTPRequest(req, dst, opts)
+func (api *API) put(urlPath string, source, destination interface{}, options reqOpts) error {
+	return api.putOrPost("PUT", urlPath, source, destination, options)
 }
 
-func (api *API) get(u string, dst interface{}, opts reqOpts) error {
-	u = api.baseURL() + u
-	req, err := http.NewRequest("GET", u, nil)
+func (api *API) putOrPost(httpVerb, urlPath string, source, destination interface{}, options reqOpts) error {
+	urlToCall := api.baseURL() + urlPath
+
+	body, err := json.Marshal(source)
+	if err != nil {
+		panic("internal error marshaling JSON " + httpVerb + " body: " + err.Error())
+	}
+
+	request, err := http.NewRequest(httpVerb, urlToCall, bytes.NewReader(body))
 	if err != nil {
 		panic("internal error: " + err.Error())
 	}
-	return api.processHTTPRequest(req, dst, opts)
+
+	return api.processHTTPRequest(request, destination, options)
+}
+
+func (api *API) get(urlPath string, destination interface{}, options reqOpts) error {
+	urlToCall := api.baseURL() + urlPath
+
+	request, err := http.NewRequest("GET", urlToCall, nil)
+	if err != nil {
+		panic("internal error: " + err.Error())
+	}
+
+	return api.processHTTPRequest(request, destination, options)
 }
 
 type reqOpts struct {

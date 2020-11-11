@@ -14,7 +14,7 @@ func main() {
 	password := flag.String("p", "", "Unifi controller username")
 	controllerHost := flag.String("c", "", "Unifi controller host")
 
-	list := flag.String("list", "client", "List [client|network|all|device]")
+	list := flag.String("list", "", "List [client|network|all|device]")
 
 	block := flag.String("block", "", "Mac address or group of device to block")
 	unblock := flag.String("unblock", "", "Mac address or group of device to unblock")
