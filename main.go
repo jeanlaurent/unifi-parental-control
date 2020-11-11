@@ -13,13 +13,16 @@ func main() {
 	username := flag.String("u", "", "Unifi controller username")
 	password := flag.String("p", "", "Unifi controller username")
 	controllerHost := flag.String("c", "", "Unifi controller host")
-	list := flag.String("list", "", "list [client|network|all|device]")
-	block := flag.String("block", "", "mac address of device to block")
-	unblock := flag.String("unblock", "", "mac address of device to unblock")
+
+	list := flag.String("list", "client", "List [client|network|all|device]")
+
+	block := flag.String("block", "", "Mac address or group of device to block")
+	unblock := flag.String("unblock", "", "Mac address or group of device to unblock")
+	config := flag.String("config", "", "Comfiguration file holding groups")
+
 	port := flag.Int("port", 0, "Port to allow poe on, must be used in conjunction with either -poeon or -poweroff")
 	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on, to be use in conjunction of -port")
 	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on, to be use in conjunction of -port")
-	config := flag.String("config", "", "config file to launch in cron mode")
 
 	flag.Parse()
 
@@ -134,19 +137,19 @@ func main() {
 }
 
 func listAllClients(api *unifi.API) {
-	log.Printf("Fetching clients...")
+	log.Printf("List all clients...")
 	clients, err := api.ListAllClients("default")
 	if err != nil {
-		log.Fatalf("Fetching clients: %v", err)
+		log.Fatalf("Listing all clients: %v", err)
 	}
 	displayClients(clients)
 }
 
 func listClients(api *unifi.API) {
-	log.Printf("Fetching clients...")
+	log.Printf("List active clients...")
 	clients, err := api.ListClients("default")
 	if err != nil {
-		log.Fatalf("Fetching clients: %v", err)
+		log.Fatalf("Listing active clients: %v", err)
 	}
 	displayClients(clients)
 }
@@ -173,7 +176,7 @@ func listUnifiDevices(api *unifi.API) {
 	log.Printf("Fetching unifi devices...")
 	unifiDevices, err := api.ListDevices("default")
 	if err != nil {
-		log.Fatalf("Fetching clients: %v", err)
+		log.Fatalf("Fetching unifi devices: %v", err)
 	}
 
 	for _, device := range unifiDevices {

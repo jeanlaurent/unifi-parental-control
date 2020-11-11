@@ -36,8 +36,7 @@ func BuildAPI(username string, password string, controllerhost string) (*API, er
 		httpClient: &http.Client{
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
-					// TODO: support proper certs
-					InsecureSkipVerify: true,
+					InsecureSkipVerify: true, // Most unifi user do not put a valid cert
 				},
 			},
 			Jar: jar,
@@ -267,10 +266,7 @@ func (api *API) EnablePortPOE(site, deviceID string, portNumber int, enable bool
 					}{
 						PortOverrides: []PortOverride{{PortIdx: port.ID, PortConfID: port.PortConfID, PoeMode: poeMode}},
 					}
-					//PUT /api/s/default/rest/device/5d61b90be30dfa0ddd69c964
-					// {"port_overrides":[{"port_idx":7,"portconf_id":"5d61b7e3e30dfa0ddd69c958","poe_mode":"off","port_security_mac_address":[]}]}
 					return api.put("/api/s/"+site+"/rest/device/"+deviceID, &request, &json.RawMessage{}, reqOpts{})
-
 				}
 			}
 		}
