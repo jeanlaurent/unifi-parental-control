@@ -54,27 +54,26 @@ sage of ./upc:
 ```
 
 ## Listing UnifiDevices
-```
-> upc -u username -p password -c controllerIP -list device
-     NAME     | TYPE | MODEL  |            ID            |        MAC        |  PORT  | PORTHASPOE | PORTISUP |         PORTCONF
---------------+------+--------+--------------------------+-------------------+--------+------------+----------+---------------------------
-  Gateway     | ugw  | UGW3   | 123445a09292921234567651 | 18:bb:29:aa:e2:dd |        |            |          |
-              |      |        |                          |                   | wan    | false      | true     |
-              |      |        |                          |                   | lan    | false      | true     |
-              |      |        |                          |                   | lan2   | false      | false    |
-  Office      | uap  | U7LT   | 123445a09292921234567652 | 74:bb:c2:aa:db:dd |        |            |          |
-  Basement    | uap  | U7NHD  | 123445a09292921234567653 | b4:bb:e4:aa:f8:dd |        |            |          |
-  1st Floor   | uap  | U7LT   | 123445a09292921234567655 | 74:bb:c2:aa:98:dd |        |            |          |
-  Main Switch | usw  | US8P60 | 123445a09292921234567654 | 74:bb:c2:aa:0a:dd |        |            |          |
-              |      |        |                          |                   | Port 1 | false      | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 2 | false      | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 3 | false      | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 4 | false      | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 5 | true       | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 6 | true       | true     | 5a5db6819348239423948233
-              |      |        |                          |                   | Port 7 | true       | true     | 5a5db6819348239423948234
-              |      |        |                          |                   | Port 8 | true       | true     | 5a5db6819348239423948233
-```
+    > upc -u username -p password -c controllerIP -list device
+        NAME     | TYPE | MODEL  |            ID            |        MAC        |  PORT  | PORTHASPOE | PORTISUP |         PORTCONF
+    --------------+------+--------+--------------------------+-------------------+--------+------------+----------+---------------------------
+      Gateway     | ugw  | UGW3   | 123445a09292921234567651 | 18:bb:29:aa:e2:dd |        |            |          |
+                  |      |        |                          |                   | wan    | false      | true     |
+                  |      |        |                          |                   | lan    | false      | true     |
+                  |      |        |                          |                   | lan2   | false      | false    |
+      Office      | uap  | U7LT   | 123445a09292921234567652 | 74:bb:c2:aa:db:dd |        |            |          |
+      Basement    | uap  | U7NHD  | 123445a09292921234567653 | b4:bb:e4:aa:f8:dd |        |            |          |
+      1st Floor   | uap  | U7LT   | 123445a09292921234567655 | 74:bb:c2:aa:98:dd |        |            |          |
+      Main Switch | usw  | US8P60 | 123445a09292921234567654 | 74:bb:c2:aa:0a:dd |        |            |          |
+                  |      |        |                          |                   | Port 1 | false      | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 2 | false      | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 3 | false      | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 4 | false      | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 5 | true       | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 6 | true       | true     | 5a5db6819348239423948233
+                  |      |        |                          |                   | Port 7 | true       | true     | 5a5db6819348239423948234
+                  |      |        |                          |                   | Port 8 | true       | true     | 5a5db6819348239423948233
+
 
 ## Blocking a client from accessing the network
 `upc -u username -p password -c controllerIP -block 7c:2f:80:18:74:e5`
