@@ -4,21 +4,23 @@ import (
 	"flag"
 	"log"
 	"os"
+	"strconv"
 
 	prettyTime "github.com/andanhm/go-prettytime"
 	"github.com/jeanlaurent/unifi-parental-control/unifi"
+	"github.com/olekukonko/tablewriter"
 )
 
 func main() {
 	username := flag.String("u", "", "Unifi controller username")
-	password := flag.String("p", "", "Unifi controller username")
+	password := flag.String("p", "", "Unifi controller password")
 	controllerHost := flag.String("c", "", "Unifi controller host")
 
 	list := flag.String("list", "", "List [client|network|all|device]")
 
 	block := flag.String("block", "", "Mac address or group of device to block")
 	unblock := flag.String("unblock", "", "Mac address or group of device to unblock")
-	config := flag.String("config", "", "Comfiguration file holding groups")
+	config := flag.String("config", "", "Configuration file holding group definition")
 
 	port := flag.Int("port", 0, "Port to allow poe on, must be used in conjunction with either -poeon or -poweroff")
 	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on, to be use in conjunction of -port")
@@ -101,6 +103,7 @@ func main() {
 			log.Println("Please provide a port number")
 			log.Println("usage:")
 			flag.PrintDefaults()
+			os.Exit(1)
 		}
 		devices, err := api.ListDevices("default")
 		if err != nil {
@@ -119,6 +122,7 @@ func main() {
 			log.Println("Please provide a port number")
 			log.Println("usage:")
 			flag.PrintDefaults()
+			os.Exit(1)
 		}
 		devices, err := api.ListDevices("default")
 		if err != nil {
@@ -163,6 +167,7 @@ func listClients(api *unifi.API) {
 }
 
 func displayClients(clients []unifi.Client) {
+	data := [][]string{}
 	for _, client := range clients {
 		name := "unknow"
 		if client.Hostname != "" {
@@ -175,9 +180,13 @@ func displayClients(clients []unifi.Client) {
 		if client.Wired {
 			wifi = "ethernet"
 		}
-		time := prettyTime.Format(client.LastSeen)
-		log.Println("device", name, "(", client.Manufacturer, ")", "on", wifi, "seen", time, "[", client.MAC, "] blocked", client.Blocked)
+		data = append(data, []string{name, client.Manufacturer, wifi, prettyTime.Format(client.LastSeen), client.MAC, strconv.FormatBool(client.Blocked)})
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Name", "Manufacturer", "Wifi/Wired", "Last Seen", "Mac", "Blocked"})
+	table.SetBorder(false)
+	table.AppendBulk(data)
+	table.Render()
 }
 
 func listUnifiDevices(api *unifi.API) {
@@ -186,15 +195,20 @@ func listUnifiDevices(api *unifi.API) {
 		log.Fatalf("Fetching unifi devices: %v", err)
 	}
 
+	data := [][]string{}
 	for _, device := range unifiDevices {
-		log.Println("device", device.Name, "(", device.Type, device.Model, ")", "ID:", device.ID, "[", device.MAC, "]")
+		data = append(data, []string{device.Name, device.Type, device.Model, device.ID, device.MAC, "", "", "", ""})
 		if len(device.PortTable) > 0 {
 			for _, port := range device.PortTable {
-				log.Println("\t", port.Name, "HasPoe:", port.POE, "up:", port.Up, "PortConf:", port.PortConfID)
+				data = append(data, []string{"", "", "", "", "", port.Name, strconv.FormatBool(port.POE), strconv.FormatBool(port.Up), port.PortConfID})
 			}
-
 		}
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Name", "Type", "Model", "ID", "Mac", "Port", "PortHasPOE", "PortIsUP", "PortConf"})
+	table.SetBorder(false)
+	table.AppendBulk(data)
+	table.Render()
 }
 
 func listNetworks(api *unifi.API) {
@@ -202,7 +216,13 @@ func listNetworks(api *unifi.API) {
 	if err != nil {
 		log.Fatalf("Fetching wireless networks: %v", err)
 	}
+	data := [][]string{}
 	for _, wlan := range wlans {
-		log.Printf("%+v\n", wlan)
+		data = append(data, []string{wlan.Name, wlan.Security, strconv.FormatBool(wlan.Enabled), strconv.FormatBool(wlan.Guest)})
 	}
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"Name", "Security", "Enabled", "Guest"})
+	table.SetBorder(false)
+	table.AppendBulk(data)
+	table.Render()
 }
