@@ -24,7 +24,13 @@ func main() {
 	poeon := flag.String("poeon", "", "DeviceID of switch to enable poe on, to be use in conjunction of -port")
 	poeoff := flag.String("poeoff", "", "DeviceID of switch to disable poe on, to be use in conjunction of -port")
 
+	displayDateTime := flag.Bool("time", false, "Prefix output with datetime default is false")
+
 	flag.Parse()
+
+	if !*displayDateTime {
+		log.SetFlags(0)
+	}
 
 	if *username == "" {
 		log.Println("Missing username")
@@ -149,7 +155,7 @@ func listClients(api *unifi.API) {
 	log.Printf("List active clients...")
 	clients, err := api.ListClients("default")
 	if err != nil {
-		log.Fatalf("Listing active clients: %v", err)
+		log.Fatalf("Listing w active clients: %v", err)
 	}
 	displayClients(clients)
 }

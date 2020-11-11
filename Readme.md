@@ -7,15 +7,15 @@ For all the below command, just run `make` once, this will generate a `upc` bina
 
 ## available commands
 ```
-Usage of ./upc:
+sage of ./upc:
   -block string
-    	mac address of device to block
+    	Mac address or group of device to block
   -c string
     	Unifi controller host
   -config string
-    	config file to launch in cron mode
+    	Comfiguration file holding groups
   -list string
-    	list [client|network|all|device]
+    	List [client|network|all|device] (default "client")
   -p string
     	Unifi controller username
   -poeoff string
@@ -24,11 +24,12 @@ Usage of ./upc:
     	DeviceID of switch to enable poe on, to be use in conjunction of -port
   -port int
     	Port to allow poe on, must be used in conjunction with either -poeon or -poweroff
+  -time
+    	Prefix output with datetime default is false
   -u string
     	Unifi controller username
   -unblock string
-    	mac address of device to unblock
-```
+    	Mac address or group of device to unblock```
 
 ## Listing clients
 `upc -u username -p password -c controllerIP -list client`
