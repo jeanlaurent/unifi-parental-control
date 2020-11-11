@@ -98,7 +98,9 @@ func main() {
 
 	if *poeon != "" {
 		if *port == 0 {
-			log.Fatal("Please provide a port number")
+			log.Println("Please provide a port number")
+			log.Println("usage:")
+			flag.PrintDefaults()
 		}
 		devices, err := api.ListDevices("default")
 		if err != nil {
@@ -114,7 +116,9 @@ func main() {
 
 	if *poeoff != "" {
 		if *port == 0 {
-			log.Fatal("Please provide a port number")
+			log.Println("Please provide a port number")
+			log.Println("usage:")
+			flag.PrintDefaults()
 		}
 		devices, err := api.ListDevices("default")
 		if err != nil {
